@@ -1,14 +1,98 @@
-# 🤖 Multi-Agent Industrial Research Crew
-Built with **CrewAI** and **Google Gemini 2.5 Flash**.
+ The Problem: Traditional Automation Is Failing in the 3D Web
+The world is shifting from flat interfaces to spatial computing, OpenUSD pipelines, and real‑time digital twins.
+But legacy automation tools were never designed for:
+• 	Multi‑modal 3D reasoning
+• 	Complex industrial workflows
+• 	Cross‑system orchestration
+• 	High‑frequency decision loops
+• 	Autonomous research missions
+As a result, companies are stuck with:
+• 	Slow manual processes
+• 	Fragmented data
+• 	Non‑scalable workflows
+• 	High operational cost
+• 	Zero real‑time intelligence
+The 3D web needs agents, not scripts.
 
-## 🚀 Overview
-This project uses an agentic workflow to research complex industrial standards like **OpenUSD 1.0** and generate professional LinkedIn content.
+⚙️ The Solution: The Global Agent Assembly Line
+A sovereign multi‑agent system built on:
+• 	CrewAI → mission orchestration
+• 	Gemini 2.5 Flash → reasoning engine
+• 	Industrial Pipelines → OpenUSD, digital twins, robotics, simulation
+• 	Recursive Loops → continuous improvement
+• 	Assembly Line Architecture → predictable, repeatable, scalable
+Your Assembly Line transforms raw tasks into industrial‑grade intelligence outputs.
+What it can do:
+• 	Autonomous research missions
+• 	OpenUSD analysis & pipeline mapping
+• 	Digital twin strategy generation
+• 	Industrial workflow automation
+• 	Multi‑agent collaboration
+• 	Tactical intelligence reports
+• 	Real‑time decision support
+This is not a chatbot.
+This is manufactured intelligence.
 
-## 🏗️ Technical Architecture
-- **Framework:** CrewAI (Agentic Orchestration)
-- **Model:** Gemini 2.5 Flash (Native Google Generative AI)
-- **Configuration:** YAML-based agent/task separation
-- **Security:** Environment-based secret management (`.env`)
+🧩 Architecture Overview
+
+Agents include:
+• 	Research Agent
+• 	Technical Analyst Agent
+• 	OpenUSD Specialist Agent
+• 	Digital Twin Strategist Agent
+• 	Synthesis Agent
+Each agent is a gear.
+Together, they form the Assembly Line.
+
+🚀 Quick Start
+
+
+🧠 Example Mission: OpenUSD Intelligence Report
+• 	Parses USD stages
+• 	Maps asset hierarchies
+• 	Identifies bottlenecks
+• 	Recommends pipeline improvements
+• 	Generates a tactical PDF report
+
+💰 Business Model (How to Hire Me)
+Your GitHub is not just open‑source — it’s your sales engine.
+Tier 1 — Open‑Core (Free)
+Everything in this repo.
+Perfect for developers, students, and early adopters.
+
+Tier 2 — Tactical Mission Report ($149/report)
+A one‑off, deep‑dive intelligence package delivered as a professional PDF.
+Examples:
+• 	OpenUSD pipeline analysis
+• 	Digital twin readiness
+• 	Industrial AI strategy
+• 	Robotics workflow mapping
+Delivered with:
+• 	Executive summary
+• 	Agent logs
+• 	Diagrams
+• 	Recommendations
+• 	Action plan
+
+Tier 3 — The Assembly Line Seat ($499+/month)
+For companies that want continuous intelligence.
+Includes:
+• 	4 custom missions per month
+• 	Priority research
+• 	Dedicated agent seat
+• 	Faster turnaround
+• 	Private communication channel
+Roadmap
+• 	[ ] Add more industrial agents
+• 	[ ] Add OpenUSD tool integrations
+• 	[ ] Add robotics mission templates
+• 	[ ] Add digital twin simulation hooks
+• 	[ ] Add enterprise deployment guide
+📬 Hire Me
+For tactical missions or monthly seats:
+LinkedIn: https://linkedin.com/in/YOUR-LINK
+GitHub: https://github.com/YOUR-USERNAME
+
 
 ## 📁 Project Structure
 - `agents.yaml`: Defines agent roles and personas.
@@ -18,4 +102,5 @@ This project uses an agentic workflow to research complex industrial standards l
 ## 🛠️ How to Run
 1. Install requirements: `pip install -r requirements.txt`
 2. Add your `GEMINI_API_KEY` to a `.env` file.
+
 3. Run: `python main_from_yaml.py`
