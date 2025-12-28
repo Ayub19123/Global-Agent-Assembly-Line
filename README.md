@@ -92,6 +92,15 @@ Roadmap
 For tactical missions or monthly seats:
 LinkedIn: https://linkedin.com/in/YOUR-LINK
 GitHub: https://github.com/YOUR-USERNAME
+```mermaid
+graph TD
+    A[Industrial Problem] --> B{Agent Assembly Line}
+    B --> C[Audit Agent: OpenUSD Analysis]
+    B --> D[Optimizer Agent: Stage Refinement]
+    C --> E[Tactical Intelligence Report]
+    D --> E
+    E --> F[Client Delivery: $149 Mission]
+```
 
 
 ## 📁 Project Structure
@@ -104,3 +113,4 @@ GitHub: https://github.com/YOUR-USERNAME
 2. Add your `GEMINI_API_KEY` to a `.env` file.
 
 3. Run: `python main_from_yaml.py`
+
