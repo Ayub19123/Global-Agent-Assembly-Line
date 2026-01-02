@@ -18,17 +18,18 @@ MOTIF_MAP = {
 memory_vault = []
 sovereign_state = {"is_sealed": False, "logs": "", "df": pd.DataFrame()}
 
-# --- 2. THE MEANING ENGINE (Layer 55 Logic) ---
+# --- 2. NARRATIVE & MEANING LOGIC (Layer 55 & 56) ---
 def annotate_with_motifs(event_type):
-    """Attaches semantic tags based on event category"""
+    """Attaches semantic tags to raw events [Layer 55]"""
     motifs = MOTIF_MAP.get(event_type, ["#unclassified"])
     return " ".join(motifs)
 
 def record_memory(event_type, details):
+    """Dual-Action Persistence: RAM & Ledger [Layer 53]"""
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     entry = {"Timestamp": timestamp, "Event": event_type, "Details": details}
-    
     memory_vault.append(entry)
+    
     ledger_df = pd.DataFrame([entry])
     if not os.path.isfile(LEDGER_FILE):
         ledger_df.to_csv(LEDGER_FILE, index=False)
@@ -36,19 +37,24 @@ def record_memory(event_type, details):
         ledger_df.to_csv(LEDGER_FILE, mode='a', header=False, index=False)
     return pd.DataFrame(memory_vault)
 
-def extract_motif_signals(n=10):
-    """Layer 55: Extracts signals with semantic meaning tags"""
+def generate_sovereign_journal(n=10):
+    """Layer 56: Aggregates ledger & motifs into a structured storyteller journal"""
     if os.path.exists(LEDGER_FILE):
-        df = pd.read_csv(LEDGER_FILE)
-        df_tail = df.tail(n).iloc[::-1]
+        df = pd.read_csv(LEDGER_FILE).tail(n).iloc[::-1]
         
-        output = "🔮 SOVEREIGN MOTIF BROADCAST\n"
-        output += "----------------------------\n"
-        for _, row in df_tail.iterrows():
+        journal = f"🏛️ SOVEREIGN CHRONICLE | DATE: {datetime.now().strftime('%Y-%m-%d')}\n"
+        journal += f"ARCHIVE STATUS: IMMORTAL SEAL ACTIVE | GOVERNANCE: V3.0\n"
+        journal += "==============================================\n\n"
+        
+        for _, row in df.iterrows():
             motifs = annotate_with_motifs(row['Event'])
-            output += f"[{row['Timestamp']}] {row['Event']} — {motifs}\n>> {row['Details']}\n\n"
-        return output
-    return "📡 Archive Empty: The Oracle is silent."
+            journal += f"📜 {row['Timestamp']} — {motifs}\n"
+            journal += f"   ➤ NARRATIVE: {row['Details']}\n\n"
+            
+        journal += "----------------------------------------------\n"
+        journal += "End of Dispatch. Registered by Sovereign Reflex Engine."
+        return journal
+    return "📜 The Archive is currently blank. No history found."
 
 def refresh_sovereign_ledger():
     if os.path.exists(LEDGER_FILE):
@@ -59,6 +65,7 @@ def immortal_seal_ritual(mem_signal, trigger_source="Manual"):
     try:
         val = float(mem_signal)
         status = "✅ Optimal" if val <= 92.6 else "⚠️ Stress Detected"
+        # We record the trigger source and the status result
         record_memory("SEAL_INITIATED" if trigger_source=="Manual" else "AUTO-REFLEX", 
                       f"Source: {trigger_source} | Signal: {mem_signal} | Status: {status}")
         sovereign_state["is_sealed"] = True
@@ -66,7 +73,7 @@ def immortal_seal_ritual(mem_signal, trigger_source="Manual"):
     except Exception as e:
         return f"❌ Error: {str(e)}", pd.DataFrame()
 
-# --- 3. THE AUTONOMOUS HEARTBEAT ---
+# --- 3. THE AUTONOMOUS HEARTBEAT (The Silent Governor) ---
 def autonomous_heartbeat():
     while True:
         if not sovereign_state["is_sealed"]:
@@ -75,10 +82,10 @@ def autonomous_heartbeat():
 
 threading.Thread(target=autonomous_heartbeat, daemon=True).start()
 
-# --- 4. SOVEREIGN UI V2.9 ---
+# --- 4. SOVEREIGN UI V3.0 (Narrative Interface) ---
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
-    gr.Markdown("# 🏛️ Global Agent Assembly Line V2.9")
-    gr.Markdown("### Phase 2: Sovereign Meaning Engine (Layer 55) Active")
+    gr.Markdown("# 🏛️ Global Agent Assembly Line V3.0")
+    gr.Markdown("### Phase 2: Sovereign Journal Exporter (Layer 56) Active")
     
     with gr.Tabs():
         with gr.TabItem("Layer 50: Immortal Seal"):
@@ -89,14 +96,15 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
 
         with gr.TabItem("Layer 53: Sovereign Audit"):
             refresh_btn = gr.Button("SYNC AUDIT LEDGER")
-            audit_table = gr.DataFrame(label="Live Disk-Record")
+            audit_table = gr.DataFrame(label="Live Disk-Record (CSV Archive)")
             refresh_btn.click(fn=refresh_sovereign_ledger, outputs=audit_table)
 
-        with gr.TabItem("Layer 55: Motif Indexer"):
-            gr.Markdown("### 🔮 Motif-Enhanced Global Echo")
-            motif_btn = gr.Button("GENERATE MOTIF SIGNALS", variant="primary")
-            motif_box = gr.Textbox(label="Semantic Broadcast Stream", lines=12)
-            motif_btn.click(fn=extract_motif_signals, outputs=motif_box)
+        with gr.TabItem("Layer 56: Journal Exporter"):
+            gr.Markdown("### 🟦 Sovereign Narrative Engine")
+            gr.Markdown("Aggregating historical motifs into a copy-paste ready archive entry.")
+            journal_btn = gr.Button("GENERATE SOVEREIGN JOURNAL", variant="primary")
+            journal_box = gr.Textbox(label="Executive Journal Export", lines=15)
+            journal_btn.click(fn=generate_sovereign_journal, outputs=journal_box)
 
 if __name__ == "__main__":
     demo.launch()
