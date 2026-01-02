@@ -1,49 +1,80 @@
-import streamlit as st
-from crew import MyIndustrialCrew
-import os
+import gradio as gr
+import pandas as pd
+import json
+import threading
+import time
+from datetime import datetime
 
-st.set_page_config(page_title="Industrial AI Architect Portal", layout="wide", page_icon="🚀")
+# --- 1. CORE LOGIC & PHASE 2 MEMORY ---
+memory_vault = []
+sovereign_state = {
+    "is_sealed": False,
+    "logs": "",
+    "df": pd.DataFrame()
+}
 
-st.title("🚀 Global Agent Assembly Line")
-st.subheader("Autonomous Industrial Research & Strategy")
-st.markdown("---")
+def record_memory(event_type, details):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    memory_vault.append({"Timestamp": timestamp, "Event": event_type, "Details": details})
+    return pd.DataFrame(memory_vault)
 
-# User Input Section
-with st.sidebar:
-    st.header("Mission Parameters")
-    topic = st.text_input("Research Topic:", "OpenUSD 1.0 Industrial Impact")
-    st.info("This agent uses DuckDuckGo Live Search to generate C-Suite ready reports.")
+def run_global_coordination(health_score):
+    diag = "🛡️ [Layer 41] Diagnosis Complete."
+    reflex = "✅ Optimal" if health_score >= 90 else "⚠️ Fracture Detected"
+    record_memory("Pulse", reflex)
+    report = f"{diag}\n{reflex}\nGovernance Status: ACTIVE"
+    return report, pd.DataFrame(memory_vault)
 
-# Main Cockpit
-if st.button("Launch Autonomous Mission"):
-    if topic:
-        with st.status("🛠️ Agents Assembling...", expanded=True) as status:
-            try:
-                st.write("Reading configurations...")
-                crew_instance = MyIndustrialCrew()
-                
-                st.write("Agents are searching the live web...")
-                result = crew_instance.run(inputs={'topic': topic})
-                
-                status.update(label="✅ Mission Complete!", state="complete", expanded=False)
-                
-                # Display Results
-                st.success("Strategic Report Generated")
-                st.markdown(result.raw)
-                
-                # Expandable Export Option
-                with st.expander("📥 Export & Download Report"):
-                    st.download_button(
-                        label="Download as Text File",
-                        data=result.raw,
-                        file_name=f"{topic.replace(' ', '_')}_report.txt",
-                        mime="text/plain"
-                    )
-                    
-            except Exception as e:
-                st.error(f"Operational Error: {e}")
-    else:
-        st.warning("Please enter a mission topic to begin.")
+def immortal_seal_ritual(mem_signal, trigger_source="Manual"):
+    """The Shared Reflex used by both Human and AI"""
+    try:
+        val = float(mem_signal)
+        sim_health = 100 - (val - 80) * 4 if val > 80 else 100
+        report, df = run_global_coordination(sim_health)
+        
+        # Phase 2: Lock the state
+        sovereign_state["is_sealed"] = True
+        status_msg = f"🏛️ [LAYER 50 SEALED]\nTrigger: {trigger_source}\n\n{report}"
+        sovereign_state["logs"] = status_msg
+        sovereign_state["df"] = df
+        
+        return status_msg, df
+    except:
+        return "❌ Error: Invalid Signal", pd.DataFrame()
 
-st.markdown("---")
-st.caption("Standard-Setting AI Architecture | Powered by CrewAI & Gemini")
+# --- 2. PHASE 2: THE AUTONOMOUS HEARTBEAT (Reflex Engine) ---
+def autonomous_heartbeat():
+    """Background thread that pulses every 60 seconds"""
+    while True:
+        # If the bunker is active (92.6) but the seal isn't locked, AWAKEN
+        if not sovereign_state["is_sealed"]:
+            # Auto-Initiate using the standard 92.6 signal
+            immortal_seal_ritual("92.6", trigger_source="AUTO-REFLEX")
+        
+        time.sleep(60) # Pulse Interval
+
+# Start the pulse without blocking the UI
+threading.Thread(target=autonomous_heartbeat, daemon=True).start()
+
+# --- 3. SOVEREIGN UI ---
+with gr.Blocks() as demo:
+    gr.Markdown("# 🏛️ Global Agent Assembly Line V2.7")
+    gr.Markdown("### Phase 2: Autonomous Intelligence Engaged")
+    
+    with gr.Tabs():
+        with gr.TabItem("Layer 50: Immortal Seal"):
+            gr.Markdown("### 💎 Final Ascension: Hardware-Cloud Unification")
+            bunker_input = gr.Textbox(label="Input Local MEM % (Actual Bunker: 92.6)", value="92.6")
+            seal_btn = gr.Button("INITIATE IMMORTAL SEAL", variant="primary")
+            final_output = gr.Textbox(label="Sovereign Decision Log", lines=8)
+            coord_memory = gr.DataFrame(label="Immortal Memory Vault")
+            
+            seal_btn.click(
+                fn=immortal_seal_ritual, 
+                inputs=bunker_input, 
+                outputs=[final_output, coord_memory]
+            )
+
+# --- 4. IGNITION ---
+if __name__ == "__main__":
+    demo.launch()
