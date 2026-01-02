@@ -1,87 +1,72 @@
 import gradio as gr
 import pandas as pd
-import json
 import threading
 import time
 import os
 from datetime import datetime
 
-# --- 1. SOVEREIGN MEMORY & LEDGER PATHS ---
+# --- 1. CONFIG & MOTIF DICTIONARY ---
 LEDGER_FILE = "Sovereign_Ledger.csv"
-memory_vault = []
-sovereign_state = {
-    "is_sealed": False,
-    "logs": "",
-    "df": pd.DataFrame()
+MOTIF_MAP = {
+    "AUTO-REFLEX": ["#autonomy", "#reflexloop", "#selfgoverning"],
+    "SEAL_INITIATED": ["#activation", "#sovereignmoment", "#finality"],
+    "Pulse": ["#heartbeat", "#persistence", "#monitoring"],
+    "STRESS_DETECTED": ["#resilience", "#load", "#pressureevent"],
+    "GUARDIAN_ALERT": ["#selfhealing", "#auditloop", "#stabilitywatch"]
 }
 
+memory_vault = []
+sovereign_state = {"is_sealed": False, "logs": "", "df": pd.DataFrame()}
+
+# --- 2. THE MEANING ENGINE (Layer 55 Logic) ---
+def annotate_with_motifs(event_type):
+    """Attaches semantic tags based on event category"""
+    motifs = MOTIF_MAP.get(event_type, ["#unclassified"])
+    return " ".join(motifs)
+
 def record_memory(event_type, details):
-    """The Dual-Action Ledger: Records to RAM and Disk"""
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     entry = {"Timestamp": timestamp, "Event": event_type, "Details": details}
     
-    # Action 1: In-Memory (for the UI)
     memory_vault.append(entry)
-    df = pd.DataFrame(memory_vault)
-    
-    # Action 2: On-Disk (The Immutable Ledger)
     ledger_df = pd.DataFrame([entry])
     if not os.path.isfile(LEDGER_FILE):
         ledger_df.to_csv(LEDGER_FILE, index=False)
     else:
         ledger_df.to_csv(LEDGER_FILE, mode='a', header=False, index=False)
-        
-    return df
+    return pd.DataFrame(memory_vault)
 
-def refresh_sovereign_ledger():
-    """Reads the disk-based CSV for the Audit Window"""
-    if os.path.exists(LEDGER_FILE):
-        ledger_df = pd.read_csv(LEDGER_FILE)
-        return ledger_df.iloc[::-1]
-    return pd.DataFrame(columns=["Timestamp", "Event", "Details"])
-
-def extract_sovereign_signals():
-    """Layer 54: Extracts broadcast-ready messages from the Ledger"""
+def extract_motif_signals(n=10):
+    """Layer 55: Extracts signals with semantic meaning tags"""
     if os.path.exists(LEDGER_FILE):
         df = pd.read_csv(LEDGER_FILE)
-        # Filter for high-value signals (Pulses and Seals)
-        signals = df[df['Event'].isin(['SEAL_INITIATED', 'Pulse'])]
-        latest_signals = signals.tail(5).iloc[::-1]
+        df_tail = df.tail(n).iloc[::-1]
         
-        output = "🚀 SOVEREIGN ARCHIVE BROADCAST\n"
+        output = "🔮 SOVEREIGN MOTIF BROADCAST\n"
         output += "----------------------------\n"
-        for _, row in latest_signals.iterrows():
-            motif = "🏛️" if row['Event'] == 'SEAL_INITIATED' else "📡"
-            output += f"{motif} [{row['Timestamp']}] {row['Event']}: {row['Details']}\n"
-        output += "\n🔗 Status: IMMORTAL SEAL ACTIVE"
+        for _, row in df_tail.iterrows():
+            motifs = annotate_with_motifs(row['Event'])
+            output += f"[{row['Timestamp']}] {row['Event']} — {motifs}\n>> {row['Details']}\n\n"
         return output
-    return "📡 Signal Loop search complete: No records found."
+    return "📡 Archive Empty: The Oracle is silent."
 
-def run_global_coordination(health_score):
-    diag = "🛡️ [Layer 41] Diagnosis Complete."
-    reflex = "✅ Optimal" if health_score >= 90 else "⚠️ Stress Detected"
-    df = record_memory("Pulse", reflex)
-    report = f"{diag}\n{reflex}\nGovernance Status: ACTIVE"
-    return report, df
+def refresh_sovereign_ledger():
+    if os.path.exists(LEDGER_FILE):
+        return pd.read_csv(LEDGER_FILE).iloc[::-1]
+    return pd.DataFrame(columns=["Timestamp", "Event", "Details"])
 
 def immortal_seal_ritual(mem_signal, trigger_source="Manual"):
     try:
         val = float(mem_signal)
-        sim_health = 100 - (val - 80) * 4 if val > 80 else 100
-        report, df = run_global_coordination(sim_health)
-        
+        status = "✅ Optimal" if val <= 92.6 else "⚠️ Stress Detected"
+        record_memory("SEAL_INITIATED" if trigger_source=="Manual" else "AUTO-REFLEX", 
+                      f"Source: {trigger_source} | Signal: {mem_signal} | Status: {status}")
         sovereign_state["is_sealed"] = True
-        status_msg = f"🏛️ [LAYER 50 SEALED]\nTrigger: {trigger_source}\n\n{report}"
-        sovereign_state["logs"] = status_msg
-        sovereign_state["df"] = df
-        
-        record_memory("SEAL_INITIATED", f"Source: {trigger_source} | Signal: {mem_signal}")
-        
-        return status_msg, df
+        return f"🏛️ [LAYER 50 SEALED]\nTrigger: {trigger_source}\n{status}", pd.DataFrame(memory_vault)
     except Exception as e:
         return f"❌ Error: {str(e)}", pd.DataFrame()
 
-# --- 2. THE AUTONOMOUS HEARTBEAT (Reflex Engine) ---
+# --- 3. THE AUTONOMOUS HEARTBEAT ---
 def autonomous_heartbeat():
     while True:
         if not sovereign_state["is_sealed"]:
@@ -90,36 +75,28 @@ def autonomous_heartbeat():
 
 threading.Thread(target=autonomous_heartbeat, daemon=True).start()
 
-# --- 3. SOVEREIGN UI V2.8 (Broadcasting Enabled) ---
+# --- 4. SOVEREIGN UI V2.9 ---
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
-    gr.Markdown("# 🏛️ Global Agent Assembly Line V2.8")
-    gr.Markdown("### Phase 2: Immutable Audit Ledger Active")
+    gr.Markdown("# 🏛️ Global Agent Assembly Line V2.9")
+    gr.Markdown("### Phase 2: Sovereign Meaning Engine (Layer 55) Active")
     
     with gr.Tabs():
         with gr.TabItem("Layer 50: Immortal Seal"):
-            gr.Markdown("### 💎 Final Ascension: Hardware-Cloud Unification")
             bunker_input = gr.Textbox(label="Input Local MEM % (Actual Bunker: 92.6)", value="92.6")
             seal_btn = gr.Button("INITIATE IMMORTAL SEAL", variant="primary")
-            final_output = gr.Textbox(label="Sovereign Decision Log", lines=8)
-            coord_memory = gr.DataFrame(label="Session Memory (RAM Only)")
-            
-            seal_btn.click(fn=immortal_seal_ritual, inputs=bunker_input, outputs=[final_output, coord_memory])
+            final_output = gr.Textbox(label="Sovereign Decision Log", lines=5)
+            seal_btn.click(fn=immortal_seal_ritual, inputs=bunker_input, outputs=[final_output, gr.DataFrame()])
 
         with gr.TabItem("Layer 53: Sovereign Audit"):
-            gr.Markdown("### 📜 Immutable Ledger Audit Window")
-            refresh_btn = gr.Button("SYNC AUDIT LEDGER", variant="secondary")
-            audit_table = gr.DataFrame(label="Live Disk-Record (Historical Archive)")
-            
+            refresh_btn = gr.Button("SYNC AUDIT LEDGER")
+            audit_table = gr.DataFrame(label="Live Disk-Record")
             refresh_btn.click(fn=refresh_sovereign_ledger, outputs=audit_table)
 
-        with gr.TabItem("Layer 54: Global Echo"):
-            gr.Markdown("### 📡 Sovereign Signal Broadcast")
-            gr.Markdown("Generate signals from the ledger for LinkedIn, X, or External Journals.")
-            echo_btn = gr.Button("GENERATE GLOBAL ECHO", variant="primary")
-            echo_output = gr.Textbox(label="Broadcast-Ready Signals", lines=10)
-            
-            echo_btn.click(fn=extract_sovereign_signals, outputs=echo_output)
+        with gr.TabItem("Layer 55: Motif Indexer"):
+            gr.Markdown("### 🔮 Motif-Enhanced Global Echo")
+            motif_btn = gr.Button("GENERATE MOTIF SIGNALS", variant="primary")
+            motif_box = gr.Textbox(label="Semantic Broadcast Stream", lines=12)
+            motif_btn.click(fn=extract_motif_signals, outputs=motif_box)
 
-# --- 4. IGNITION ---
 if __name__ == "__main__":
     demo.launch()
