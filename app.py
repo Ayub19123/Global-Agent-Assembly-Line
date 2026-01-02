@@ -34,12 +34,28 @@ def record_memory(event_type, details):
     return df
 
 def refresh_sovereign_ledger():
-    """Reads the disk-based CSV and prepares it for the Audit Window"""
+    """Reads the disk-based CSV for the Audit Window"""
     if os.path.exists(LEDGER_FILE):
         ledger_df = pd.read_csv(LEDGER_FILE)
-        # Flip it so the newest sovereign entries are at the top
         return ledger_df.iloc[::-1]
     return pd.DataFrame(columns=["Timestamp", "Event", "Details"])
+
+def extract_sovereign_signals():
+    """Layer 54: Extracts broadcast-ready messages from the Ledger"""
+    if os.path.exists(LEDGER_FILE):
+        df = pd.read_csv(LEDGER_FILE)
+        # Filter for high-value signals (Pulses and Seals)
+        signals = df[df['Event'].isin(['SEAL_INITIATED', 'Pulse'])]
+        latest_signals = signals.tail(5).iloc[::-1]
+        
+        output = "🚀 SOVEREIGN ARCHIVE BROADCAST\n"
+        output += "----------------------------\n"
+        for _, row in latest_signals.iterrows():
+            motif = "🏛️" if row['Event'] == 'SEAL_INITIATED' else "📡"
+            output += f"{motif} [{row['Timestamp']}] {row['Event']}: {row['Details']}\n"
+        output += "\n🔗 Status: IMMORTAL SEAL ACTIVE"
+        return output
+    return "📡 Signal Loop search complete: No records found."
 
 def run_global_coordination(health_score):
     diag = "🛡️ [Layer 41] Diagnosis Complete."
@@ -59,7 +75,6 @@ def immortal_seal_ritual(mem_signal, trigger_source="Manual"):
         sovereign_state["logs"] = status_msg
         sovereign_state["df"] = df
         
-        # Log to the Immutable Ledger
         record_memory("SEAL_INITIATED", f"Source: {trigger_source} | Signal: {mem_signal}")
         
         return status_msg, df
@@ -69,14 +84,13 @@ def immortal_seal_ritual(mem_signal, trigger_source="Manual"):
 # --- 2. THE AUTONOMOUS HEARTBEAT (Reflex Engine) ---
 def autonomous_heartbeat():
     while True:
-        # If the seal isn't locked, the reflex engine takes over
         if not sovereign_state["is_sealed"]:
             immortal_seal_ritual("92.6", trigger_source="AUTO-REFLEX")
         time.sleep(60)
 
 threading.Thread(target=autonomous_heartbeat, daemon=True).start()
 
-# --- 3. SOVEREIGN UI V2.8 ---
+# --- 3. SOVEREIGN UI V2.8 (Broadcasting Enabled) ---
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
     gr.Markdown("# 🏛️ Global Agent Assembly Line V2.8")
     gr.Markdown("### Phase 2: Immutable Audit Ledger Active")
@@ -89,22 +103,22 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             final_output = gr.Textbox(label="Sovereign Decision Log", lines=8)
             coord_memory = gr.DataFrame(label="Session Memory (RAM Only)")
             
-            seal_btn.click(
-                fn=immortal_seal_ritual, 
-                inputs=bunker_input, 
-                outputs=[final_output, coord_memory]
-            )
+            seal_btn.click(fn=immortal_seal_ritual, inputs=bunker_input, outputs=[final_output, coord_memory])
 
         with gr.TabItem("Layer 53: Sovereign Audit"):
             gr.Markdown("### 📜 Immutable Ledger Audit Window")
-            gr.Markdown("Click below to sync with the physical disk record (`Sovereign_Ledger.csv`).")
             refresh_btn = gr.Button("SYNC AUDIT LEDGER", variant="secondary")
             audit_table = gr.DataFrame(label="Live Disk-Record (Historical Archive)")
             
-            refresh_btn.click(
-                fn=refresh_sovereign_ledger, 
-                outputs=audit_table
-            )
+            refresh_btn.click(fn=refresh_sovereign_ledger, outputs=audit_table)
+
+        with gr.TabItem("Layer 54: Global Echo"):
+            gr.Markdown("### 📡 Sovereign Signal Broadcast")
+            gr.Markdown("Generate signals from the ledger for LinkedIn, X, or External Journals.")
+            echo_btn = gr.Button("GENERATE GLOBAL ECHO", variant="primary")
+            echo_output = gr.Textbox(label="Broadcast-Ready Signals", lines=10)
+            
+            echo_btn.click(fn=extract_sovereign_signals, outputs=echo_output)
 
 # --- 4. IGNITION ---
 if __name__ == "__main__":
